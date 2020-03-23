@@ -1,0 +1,43 @@
+
+set channel=CHANNEL_NAME
+
+if not exist "%channel%" mkdir %channel%
+
+set i=0
+set j=0
+
+:SymLoop
+if defined url_list[%i%] (
+    call echo [96mDownloading: %%url_list[%i%]%%[0m
+	
+	set file_path=%channel%/%%filenames[%i%]%%
+	
+	:WhileFileExists
+	FOR /F "tokens=* USEBACKQ" %%F IN (`call echo !file_path!`) DO (
+	
+		IF EXIST %%F (
+		
+			
+			set /a j+=1
+			set file_path=%channel%/duplicate_!j!_%%filenames[!i!]%%
+			
+			GOTO :WhileFileExists
+			
+		) ELSE (
+		
+			call curl -o !file_path! %%url_list[!i!]%%
+		)
+		
+		echo.
+		set /a i+=1
+		GOTO :SymLoop
+		
+	)
+)
+
+echo.
+echo [92mFinished downloading images FILES_COUNT images...[0m
+echo.
+
+ENDLOCAL
+cmd /k 

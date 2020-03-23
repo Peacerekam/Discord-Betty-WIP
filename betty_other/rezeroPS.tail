@@ -1,0 +1,63 @@
+
+
+# Array of urls gets added right above this code...
+
+$start_time = Get-Date
+$last_image_file = "$PSScriptRoot\CHANNEL_ID.li" # this gets replaced
+$channel_name = "CHANNEL_NAME" # this gets replaced
+
+Write-Output "`n`n`n`n`n"
+New-Item -ItemType Directory -Force -Path "$channel_name"
+
+if (!(Test-Path $last_image_file)) {
+	New-Item -Path $last_image_file -Force
+	Set-Content $last_image_file 0
+	#(get-item $last_image_file).Attributes += 'Hidden'
+	
+	Write-Output "`n`nCreated $last_image_file file"
+	Write-Host "Keep this file if you want to stop the download at some point and resume it later" -ForegroundColor Red
+	Write-Output "Starting fresh download, if you quit mid-download the script will know where you stopped :)`n"
+} else {
+	Write-Output "`n`nLocated $last_image_file file"
+	Write-Host "Keep this file if you want to stop the download at some point and resume it later" -ForegroundColor Red
+	Write-Output "Starting download from where you stopped it last time :)`n"
+}
+
+$str_num = (Get-Content -Path $last_image_file)
+[int]$last_message_id = [convert]::ToInt32($str_num, 10)
+
+$downloaded = 0
+
+for ($i = $last_message_id; $i -lt $data.Length; $i++) {
+	
+	New-Item -ItemType Directory -Force -Path "$channel_name\$($data[$i].Folder)"
+
+	$split_name = $($data[$i].Filename).Split(".")
+	$filename = $split_name[0]
+	$ext = $split_name[1]
+	
+	$j = 0
+	$dl_path = "$channel_name\$($data[$i].Folder)\$filename.$ext"
+	
+	while (Test-Path $dl_path) {
+		$j++
+		$dl_path = "$channel_name\$($data[$i].Folder)\$filename-duplicate-$j.$ext"
+	}
+
+	Invoke-WebRequest -Uri $data[$i].Url -OutFile $dl_path
+	
+	$time_passed = $((Get-Date).Subtract($start_time)).ToString().Substring(0,8)
+	Write-Output "$time_passed >> $dl_path"
+	Set-Content $last_image_file $i
+	$downloaded++
+}
+
+$message="Current download session ended with $downloaded media downloaded ($($data.Length) total)"
+# Check if running Powershell ISE
+if ($psISE) {
+	Add-Type -AssemblyName System.Windows.Forms
+	[System.Windows.Forms.MessageBox]::Show("$message")
+} else {
+	Write-Host "$message" -ForegroundColor Yellow
+	$x = $host.ui.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+}
