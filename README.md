@@ -1,5 +1,5 @@
 # This app works, but it is being rewritten
-See React-Betty-Rewrite repo. Backend and the bot portion will stay mostly the same. Discord interaction will be replaced with an actual frontend React webapp. 
+See [React-Betty-Rewrite](https://github.com/Peacerekam/React-Betty-Rewrite) repo. <br>Backend and the bot portion will stay mostly the same. Discord interaction will be replaced with an actual frontend React webapp. 
 
 # Discord-Betty-WIP
 Bulk download images from channels. This method is NOT against ToS <br>
