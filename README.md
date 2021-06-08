@@ -1,5 +1,5 @@
 # Discord-Betty-WIP
-Bulk download images from channels. 100% legal, white area, not against ToS <br>
+Bulk download images from channels. This method is NOT against ToS <br>
 <br> <br>
 Bot fetches all image urls from the channel into database and lets you create powershell/batch scripts to bulk download them. Those permalink messages autoupdate every 5 minutes with new images as long as bot is up.<br>
 Intended workflow: b?fetch #channel => b?permalink #channel (optional b?tag #channel)
